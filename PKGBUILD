@@ -14,69 +14,23 @@ arch=('i686' 'x86_64')
 url="http://www.wolfram.com/mathematica/"
 license=('proprietary')
 depends=(
-    'openmp'
+    'openmp' 'glu'
 )
 optdepends=(
     ## The following list of dependencies was inferred from namcap's output.  If
     ## you believe there is an error, please let me know.  Also feel free to
     ## contribute description to dependencies if you know what they do.
-    'alsa-lib'
-    'atk'
-    'cairo'
-    'clucene'
-    'cuda'
-    'curl'
-    'espeak'
-    'ffmpeg'
-    'fluidsynth'
-    'fontconfig'
-    'freetype2'
-    'gdk-pixbuf2'
-    'glib2'
-    'glu'
-    'gmime'
-    'gmp'
-    'gtk2'
-    'harfbuzz'
-    'icu'
-    'intel-mkl'
-    'java-environment'
-    'lame'
-    'lcms2'
-    'leptonica'
-    'libbson'
-    'libffi'
-    'libjpeg-turbo'
-    'libmad'
-    'libmongoc'
-    'libnet'
-    'libogg'
-    'libpng12'
-    'libselinux'
-    'libsm'
-    'libssh2'
-    'libutil-linux'
-    'libwebp'
-    'libx11'
-    'libxml2'
-    'libxslt'
-    'libxtst'
-    'libxxf86vm'
-    'mesa-demos: for improved graphics output'
-    'ncurses'
-    'nvidia-utils'
-    'opencv'
-    'openssl-1.0'
-    'pango'
-    'pixman'
-    'portaudio'
-    'r'
-    'tesseract'
-    'zlib'
+    'alsa-lib' 'atk' 'cairo' 'clucene' 'cuda' 'curl' 'espeak' 'ffmpeg' 'fluidsynth' 'fontconfig' 'freetype2'
+    'gdk-pixbuf2' 'glib2' 'glu' 'gmime' 'gmp' 'gtk2' 'harfbuzz' 'icu' 'intel-mkl' 'java-environment' 'lame'
+    'lcms2' 'leptonica' 'libbson' 'libffi' 'libjpeg-turbo' 'libmad' 'libmongoc' 'libnet' 'libogg' 'libpng12'
+    'libselinux' 'libsm' 'libssh2' 'libutil-linux' 'libwebp' 'libx11' 'libxml2' 'libxslt' 'libxtst' 'libxxf86vm'
+    'mesa-demos: for improved graphics output' 'ncurses' 'nvidia-utils' 'opencv' 'openssl-1.0' 'pango'
+    'pixman' 'portaudio' 'r' 'tesseract' 'zlib'
 )
-source=("local://Mathematica_${pkgver}_LINUX.sh" "duplicate-libs.txt")
-md5sums=('623f9fa3d34ded6997c7b9f1505097c0'
+source=("Mathematica_${pkgver}_LINUX.sh" "duplicate-libs.txt")
+md5sums=('3fc2327f21bcddbcf20d9d569e6f3e32'
          'e442aa2286a9d93e932076c974517dd7')
+
 options=("!strip")
 
 ## To build this package you need to place the mathematica-installer into your
@@ -110,7 +64,7 @@ prepare() {
 package() {
     msg2 "Running Mathematica installer"
     # https://reference.wolfram.com/language/tutorial/InstallingMathematica.html#650929293
-    sh ${srcdir}/Mathematica_${pkgver}_LINUX.sh -- \
+    sh ${srcdir}/Mathematica_${pkgver}_LINUX.sh --keep -- \
              -execdir=${pkgdir}/usr/bin \
              -targetdir=${pkgdir}/opt/Mathematica \
              -auto
@@ -145,7 +99,8 @@ package() {
     mkdir -p ${srcdir}/WolframScript
     mkdir -p ${pkgdir}/usr/share/
     cd ${srcdir}/WolframScript
-    bsdtar -xf ${pkgdir}/opt/Mathematica/SystemFiles/Installation/wolframscript_1.2.0-36_amd64.deb data.tar.gz
+
+    bsdtar -xf ${pkgdir}/opt/Mathematica/SystemFiles/Installation/wolframscript_1.2.0-38_amd64.deb data.tar.gz
     tar -xf data.tar.gz -C ${pkgdir}/usr/share/ --strip=3 ./usr/share/
 
 
