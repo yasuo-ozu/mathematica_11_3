@@ -7,8 +7,8 @@
 # Contributor: teratomata <teratomat@gmail.com>
 
 pkgname=mathematica
-pkgver=11.3.0
-pkgrel=3
+pkgver=12.0.0
+pkgrel=0
 pkgdesc="A computational software program used in scientific, engineering, and mathematical fields and other areas of technical computing."
 arch=('i686' 'x86_64')
 url="http://www.wolfram.com/mathematica/"
@@ -27,8 +27,10 @@ optdepends=(
     'mesa-demos: for improved graphics output' 'ncurses' 'nvidia-utils' 'opencv' 'openssl-1.0' 'pango'
     'pixman' 'portaudio' 'r' 'tesseract' 'zlib'
 )
-source=("Mathematica_${pkgver}_LINUX.sh" "duplicate-libs.txt")
-md5sums=('3fc2327f21bcddbcf20d9d569e6f3e32'
+IsoFile="Mathematica_${pkgver}_Japanese_LINUX.iso"
+InstFile="Unix/Installer/MathInstaller"
+source=("${IsoFile}" "duplicate-libs.txt")
+md5sums=('4b3d55472cfc9c6dba6dcf6d5bb65af0'
          'e442aa2286a9d93e932076c974517dd7')
 
 options=("!strip")
@@ -58,13 +60,16 @@ prepare() {
         false
     fi
 
-    chmod +x ${srcdir}/Mathematica_${pkgver}_LINUX.sh
+	if [ ! -x "${srcdir}/${InstFile}" ]; then
+		msg2 "ERROR: Cannot found installer"
+		false
+	fi
 }
 
 package() {
     msg2 "Running Mathematica installer"
     # https://reference.wolfram.com/language/tutorial/InstallingMathematica.html#650929293
-    sh ${srcdir}/Mathematica_${pkgver}_LINUX.sh --keep -- \
+    sh ${srcdir}/${InstFile}  \
              -execdir=${pkgdir}/usr/bin \
              -targetdir=${pkgdir}/opt/Mathematica \
              -auto
@@ -100,8 +105,8 @@ package() {
     mkdir -p ${pkgdir}/usr/share/
     cd ${srcdir}/WolframScript
 
-    bsdtar -xf ${pkgdir}/opt/Mathematica/SystemFiles/Installation/wolframscript_1.2.0-38_amd64.deb data.tar.gz
-    tar -xf data.tar.gz -C ${pkgdir}/usr/share/ --strip=3 ./usr/share/
+    bsdtar -xf ${pkgdir}/opt/Mathematica/SystemFiles/Installation/wolframscript_1.3.0+2019042801_amd64.deb
+    tar -xf data.tar.xz -C ${pkgdir}/usr/share/ --strip=3 ./usr/share/
 
 
     msg2 "Copying menu and mimetype information"
@@ -110,7 +115,7 @@ package() {
           ${pkgdir}/usr/share/desktop-directories \
           ${pkgdir}/usr/share/mime/packages
     cd ${pkgdir}/opt/Mathematica/SystemFiles/Installation
-    desktopFile='wolfram-mathematica11.desktop'
+    desktopFile='Mathematica.desktop'
     sed -Ei 's|^(\s*TryExec=).*|\1/usr/bin/Mathematica|g' $desktopFile
     sed -Ei 's|^(\s*Exec=).*|\1/usr/bin/Mathematica %F|g' $desktopFile
     printf 'Categories=Science;Math;NumericalAnalysis;DataVisualization;' >> $desktopFile
@@ -307,7 +312,7 @@ package() {
     ## (except for Qt libraries which Mathematica expects).
     cd "${pkgdir}"
     while read lib ; do
-        rm $lib
+        rm -f $lib
     done < "${srcdir}/duplicate-libs.txt"
 
     ## The documentation takes up the majority of the disk space (4.7G+).  If you
