@@ -7,7 +7,7 @@
 # Contributor: teratomata <teratomat@gmail.com>
 
 pkgname=mathematica
-pkgver=12.0.0
+pkgver=12.2.0
 pkgrel=0
 pkgdesc="A computational software program used in scientific, engineering, and mathematical fields and other areas of technical computing."
 arch=('i686' 'x86_64')
@@ -30,7 +30,7 @@ optdepends=(
 IsoFile="Mathematica_${pkgver}_Japanese_LINUX.iso"
 InstFile="Unix/Installer/MathInstaller"
 source=("${IsoFile}" "duplicate-libs.txt")
-md5sums=('4b3d55472cfc9c6dba6dcf6d5bb65af0'
+md5sums=('cb738d7272f81625d74997782054d392'
          'e442aa2286a9d93e932076c974517dd7')
 
 options=("!strip")
@@ -105,7 +105,8 @@ package() {
     mkdir -p ${pkgdir}/usr/share/
     cd ${srcdir}/WolframScript
 
-    bsdtar -xf ${pkgdir}/opt/Mathematica/SystemFiles/Installation/wolframscript_1.3.0+2019042801_amd64.deb
+    #bsdtar -xf ${pkgdir}/opt/Mathematica/SystemFiles/Installation/wolframscript_1.3.0+2019042801_amd64.deb
+    bsdtar -xf `find ${pkgdir}/opt/Mathematica/SystemFiles/Installation/ -name '*_amd64.deb'`
     tar -xf data.tar.xz -C ${pkgdir}/usr/share/ --strip=3 ./usr/share/
 
 
@@ -115,7 +116,7 @@ package() {
           ${pkgdir}/usr/share/desktop-directories \
           ${pkgdir}/usr/share/mime/packages
     cd ${pkgdir}/opt/Mathematica/SystemFiles/Installation
-    desktopFile='Mathematica.desktop'
+    desktopFile='wolfram-mathematica12.desktop'
     sed -Ei 's|^(\s*TryExec=).*|\1/usr/bin/Mathematica|g' $desktopFile
     sed -Ei 's|^(\s*Exec=).*|\1/usr/bin/Mathematica %F|g' $desktopFile
     printf 'Categories=Science;Math;NumericalAnalysis;DataVisualization;' >> $desktopFile
